@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -19,7 +17,6 @@ public class PlayerMovement : MonoBehaviour
         {
             direct = new Vector3(joystick.Horizontal, joystick.Vertical, 0);
         }
-        Debug.Log(direct);
         Move(direct.normalized);
     }
 

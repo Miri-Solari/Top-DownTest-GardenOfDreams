@@ -1,18 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class HPBar : MonoBehaviour
+public class HPBar : MonoBehaviour //самый простой HPBar
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] BaseUnit unit;
+    [SerializeField] Image HP;
+    [SerializeField] private float _maxHP;
+
+
+    private void Start()
     {
-        
+        HP.type = Image.Type.Filled;
+        HP.fillMethod = Image.FillMethod.Horizontal;
+        _maxHP = unit.HP;
     }
 
-    // Update is called once per frame
-    void Update()
+
+    private void Update()
     {
-        
+        HP.fillAmount = unit.HP / _maxHP;
     }
+
 }

@@ -1,18 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class BaseUnit : MonoBehaviour
+public class BaseUnit : MonoBehaviour, IDamageable, IMortal
 {
-    // Start is called before the first frame update
-    void Start()
+    public float HP { get => _currHP;}
+
+    [SerializeField] private protected float _currHP = 10;
+
+    public void TakeDamage(float dmg) //получаем урон
     {
-        
+        _currHP -= dmg;
+        if (_currHP <= 0)
+        {
+            Death();
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Death() // помираем
     {
-        
+        Destroy(gameObject);
     }
 }
