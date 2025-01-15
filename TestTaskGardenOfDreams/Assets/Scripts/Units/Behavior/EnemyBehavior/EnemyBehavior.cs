@@ -2,7 +2,7 @@ using UnityEngine;
 
 
 
-public class EnemyBehavior : BaseBehavior //взял со своего проекта и немного переделал под текущие задачи
+public class EnemyBehavior : BaseBehavior //взял со своего проекта и немного переделал под текущие задачи, не самый лучший код, но делать через NavMesh не хочется
 {
     [SerializeField] Rigidbody2D body;
     [SerializeField] Transform centre;
@@ -98,7 +98,7 @@ public class EnemyBehavior : BaseBehavior //взял со своего проекта и немного пер
             _currNoChillTime += Time.fixedDeltaTime;
             if (Vector2.Distance((Vector2)centre.position, _startPosition) > walkingRadius)
             {
-                Move(-_startPosition + (Vector2)centre.position);
+                Move((-_startPosition + (Vector2)centre.position).normalized);
                 _isWalking = false;
                 _startPosition = centre.position;
             }
@@ -109,9 +109,7 @@ public class EnemyBehavior : BaseBehavior //взял со своего проекта и немного пер
             }
             else
             {
-                Debug.Log(_targetPosition);
-
-                Move(_targetPosition);
+                Move(_targetPosition.normalized);
             }
 
             FindTheWay();
@@ -129,23 +127,23 @@ public class EnemyBehavior : BaseBehavior //взял со своего проекта и немного пер
             {
                 Evade();
             }
-        }
-        else if (player == null) { }
-        else if (((Vector2)centre.position - (Vector2)player.transform.position).magnitude > agrRadius)
-        {
-            Chill();
+
+            else if (((Vector2)centre.position - (Vector2)player.transform.position).magnitude > agrRadius)
+            {
+                Chill();
+            }
         }
     }
 
     override protected void Evade()
     {
-
+        FindTheWay();
         if (player != null)
         {
             if (((Vector2)centre.position - (Vector2)player.transform.position).magnitude <= evadeRadius)
             {
                 _isWalking = true;
-                Move((Vector2)(player.transform.position - centre.position) * _meleeMulti);
+                Move((Vector2)(player.transform.position - centre.position).normalized * _meleeMulti);
             }
             else
             {
@@ -162,15 +160,14 @@ public class EnemyBehavior : BaseBehavior //взял со своего проекта и немного пер
     override protected void FindTheWay()
     {
 
-        var obstacles = Physics2D.CircleCastAll((Vector2)transform.position, walkingRadius, _targetPosition, evadeRadius / 2, maskToBypass);
+        var obstacles = Physics2D.CircleCastAll((Vector2)centre.position, walkingRadius/2, _targetPosition, 0, maskToBypass);
         foreach (var obstacle in obstacles)
         {
-
-            if (obstacle.collider != null && (obstacle.collider.transform.position - transform.position).magnitude < walkingRadius * 0.5f)
+            if (obstacle.collider != null )
             {
-                Move((Vector2)(obstacle.collider.transform.position - transform.position) * 1.5f);
+                Move((Vector2)(obstacle.collider.transform.position - transform.position) * -3f);
                 _isWalking = false;
-            }
+            }   
             else if (!_isWalking && obstacle.collider == null)
             {
                 _startPosition = transform.position;
@@ -185,7 +182,7 @@ public class EnemyBehavior : BaseBehavior //взял со своего проекта и немного пер
     {
         if (_isWalking)
         {
-            body.velocity = target.normalized * speed;
+            body.velocity = target * speed;
         }
 
     }

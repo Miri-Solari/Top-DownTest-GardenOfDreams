@@ -7,7 +7,7 @@ public class BaseBullet : MonoBehaviour
     [SerializeField] bool isItScenes = false;
     private float _currentTime = 0;
 
-    // Update is called once per frame
+
     void FixedUpdate()
     {
         _currentTime += Time.fixedDeltaTime;
@@ -19,16 +19,8 @@ public class BaseBullet : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        IDamageable? baseUnit = null;
+        IDamageable baseUnit = null;
         collision.gameObject.TryGetComponent<IDamageable>(out baseUnit);
-        if (baseUnit == null)
-        {
-            baseUnit = collision.gameObject.GetComponentInChildren<BaseUnit>();
-        }
-        if (baseUnit == null)
-        {
-            baseUnit = collision.gameObject.GetComponentInParent<BaseUnit>();
-        }
         if (baseUnit != null)
         {
             baseUnit.TakeDamage(BulletDamage);
